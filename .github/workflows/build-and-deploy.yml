@@ -6,7 +6,8 @@ on:
 
 env:
   API_DIR: TodoApi.Server
-  API_OUTPUT_DIR: TodoApi.Server/dist
+  API_PROJECT_PATH: TodoApi.Server/TodoApi.Server.csproj
+  API_OUTPUT_DIR: dist
   DOTNET_VERSION: 3.1.300
   CLIENT_DIR: todoapi-client
   CLIENT_OUTPUT_DIR: todoapi-client/dist
@@ -27,7 +28,7 @@ jobs:
       run: dotnet restore
       working-directory: ${{ env.API_DIR }}
     - name: Publish
-      run: dotnet publish --configuration Release --no-restore --output ${{ env.API_OUTPUT_DIR }}
+      run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration Release --no-restore --output ${{ env.API_OUTPUT_DIR }}
       working-directory: ${{ env.API_DIR }}
     - name: Test
       run: dotnet test --no-restore --verbosity normal
@@ -56,5 +57,5 @@ jobs:
       - name: Archive
         uses: actions/upload-artifact@v1
         with:
-          name: api
-          path: ${{ env.API_OUTPUT_DIR }}
+          name: client
+          path: ${{ env.CLIENT_OUTPUT_DIR }}
