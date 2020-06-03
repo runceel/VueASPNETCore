@@ -90,7 +90,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_DESERT_0F4BC1300 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: 'upload'
-          app_location: './' # App source code path
+          app_location: '/' # App source code path
 
   deploy-api-to-azure:
     runs-on: windows-latest
