@@ -74,7 +74,7 @@ jobs:
           path: ${{ env.CLIENT_OUTPUT_DIR }}
 
   deploy-client-to-azure:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: [build-client]
     if: github.event_name == 'push' && github.ref == 'refs/heads/release'
     
@@ -107,7 +107,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with: 
           app-name: ${{ env.API_WEBAPP_NAME }} # Replace with your app name
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} # Define secret variable in repository settings as per action documentation
+          publish-profile: ${{ secrets.AZURE_WEB_APP_API_PUBLISH_PROFILE  }} # Define secret variable in repository settings as per action documentation
           package: '/api'
 
     
