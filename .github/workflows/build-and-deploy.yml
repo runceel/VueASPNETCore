@@ -13,7 +13,7 @@ env:
   NODE_VERSION: 12.18.0
 
 jobs:
-  build api:
+  'build api':
 
     runs-on: windows-latest
 
