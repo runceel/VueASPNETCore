@@ -1,0 +1,60 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  API_DIR: TodoApi.Server
+  API_OUTPUT_DIR: TodoApi.Server/dist
+  DOTNET_VERSION: 3.1.300
+  CLIENT_DIR: todoapi-client
+  CLIENT_OUTPUT_DIR: todoapi-client/dist
+  NODE_VERSION: 12.18.0
+
+jobs:
+  build api:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: ${{ env.API_DIR }}
+    - name: Publish
+      run: dotnet publish --configuration Release --no-restore --output ${{ API_OUTPUT_DIR }}
+      working-directory: ${{ env.API_DIR }}
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+      working-directory: ${{ env.API_DIR }}
+    - name: Archive
+      uses: actions/upload-artifact@v1
+      with:
+        name: api
+        path: ${{ API_OUTPUT_DIR }}
+
+  build client:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/echeckout@v2
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm run build
+          npm run test
+        working-directory: ${{ env.CLIENT_DIR }}
+      - name: Archive
+        uses: actions/upload-artifact@v1
+        with:
+          name: api
+          path: ${{ API_OUTPUT_DIR }}
