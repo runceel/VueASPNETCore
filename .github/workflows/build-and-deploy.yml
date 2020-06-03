@@ -2,7 +2,7 @@ name: Build and deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, release ]
 
 env:
   API_DIR: TodoApi.Server
@@ -14,6 +14,7 @@ env:
   NODE_VERSION: 12.18.0
   VUE_CLI_VERSION: 4.4.1
   VUE_CLI_SERVICE_VERSION: 4.4.1
+  API_WEBAPP_NAME: vueaspnetcoreapi
 
 jobs:
   build-api:
@@ -60,9 +61,6 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-#      - name: install vue clie
-#        run: |
-#          npm install -g @vue/cli@$env:VUE_CLI_VERSION @vue/cli-service-global@$env:VUE_CLI_SERVICE_VERSION typescript
       - name: npm install, build, and test
         run: |
           npm install
@@ -74,3 +72,42 @@ jobs:
         with:
           name: client
           path: ${{ env.CLIENT_OUTPUT_DIR }}
+
+  deploy-client-to-azure:
+    runs-on: windows-latest
+    needs: [build-client]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/release'
+    
+    steps:
+      - name: Download archives
+        uses: actions/download-artifact@v2
+        with:
+          name: client
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v0.0.1-preview
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_DESERT_0F4BC1300 }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          action: 'upload'
+          app_location: '/client' # App source code path
+
+  deploy-api-to-azure:
+    runs-on: windows-latest
+    needs: [build-api]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/release'
+    
+    steps:
+      - name: Download archives
+        uses: actions/download-artifact@v2
+        with:
+          name: api
+      # Deploy to Azure Web apps
+      - name: 'Run Azure webapp deploy action using publish profile credentials'
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.API_WEBAPP_NAME }} # Replace with your app name
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} # Define secret variable in repository settings as per action documentation
+          package: '/api'
+
+    
