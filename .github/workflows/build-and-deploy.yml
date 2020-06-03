@@ -13,7 +13,7 @@ env:
   NODE_VERSION: 12.18.0
 
 jobs:
-  'build api':
+  build-api:
 
     runs-on: windows-latest
 
@@ -38,7 +38,7 @@ jobs:
         name: api
         path: ${{ env.API_OUTPUT_DIR }}
 
-  build client:
+  build-client:
     runs-on: windows-latest
     
     steps:
