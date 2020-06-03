@@ -42,7 +42,7 @@ jobs:
         path: ${{ env.API_DIR }}/${{ env.API_OUTPUT_DIR }}
 
   build-client:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     steps:
       - uses: actions/checkout@v2
