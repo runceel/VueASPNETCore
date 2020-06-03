@@ -42,7 +42,7 @@ jobs:
         path: ${{ env.API_DIR }}/${{ env.API_OUTPUT_DIR }}
 
   build-client:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v2
@@ -50,9 +50,19 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: install vue clie
-        run: |
-          npm install -g @vue/cli@$env:VUE_CLI_VERSION @vue/cli-service-global@$env:VUE_CLI_SERVICE_VERSION typescript
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+#      - name: install vue clie
+#        run: |
+#          npm install -g @vue/cli@$env:VUE_CLI_VERSION @vue/cli-service-global@$env:VUE_CLI_SERVICE_VERSION typescript
       - name: npm install, build, and test
         run: |
           npm install
