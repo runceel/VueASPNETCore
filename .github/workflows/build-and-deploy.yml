@@ -52,7 +52,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: install vue clie
         run: |
-          npm install -g @vue/cli@{{ env.VUE_CLI_VERSION }} @vue/cli-service-global@{{ env.VUE_CLI_SERVICE_VERSION }}
+          npm install -g @vue/cli@$env:VUE_CLI_VERSION @vue/cli-service-global@$env:VUE_CLI_SERVICE_VERSION
       - name: npm install, build, and test
         run: |
           npm install
