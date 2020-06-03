@@ -12,6 +12,8 @@ env:
   CLIENT_DIR: todoapi-client
   CLIENT_OUTPUT_DIR: todoapi-client/dist
   NODE_VERSION: 12.18.0
+  VUE_CLI_VERSION: 4.4.1
+  VUE_CLI_SERVICE_VERSION: 4.4.1
 
 jobs:
   build-api:
@@ -37,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: api
-        path: ${{ env.API_OUTPUT_DIR }}
+        path: ${{ env.API_DIR }}/${{ env.API_OUTPUT_DIR }}
 
   build-client:
     runs-on: windows-latest
@@ -48,6 +50,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: install vue clie
+        run: |
+          npm install -g @vue/cli@{{ env.VUE_CLI_VERSION }} @vue/cli-service-global@{{ env.VUE_CLI_SERVICE_VERSION }}
       - name: npm install, build, and test
         run: |
           npm install
